@@ -1,13 +1,7 @@
 import React, { useState, useRef } from "react";
 import "./ZoomableImage.css";
 
-const ZoomableImage = ({
-  src,
-  alt,
-  zoomFactor = 2,
-  maxZoom = 4,
-  minZoom = 1,
-}) => {
+const ZoomableImage = ({ src, alt }) => {
   const [zoom, setZoom] = useState(1);
   const [xCoordinate, setXCoordinate] = useState(0);
   const [yCoordinate, setYCoordinate] = useState(0);
@@ -21,36 +15,7 @@ const ZoomableImage = ({
 
   const handleDoubleClick = (event) => {
     if (!containerRef.current || !imgRef.current) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
-
-    const imgRect = imgRef.current.getBoundingClientRect();
-    const relClickX = (clickX - xCoordinate) / zoom;
-    const relClickY = (clickY - yCoordinate) / zoom;
-
-    let newZoom;
-    let newXCoordinate, newYCoordinate;
-
-    if (zoom === 1) {
-      // Zoom in
-      newZoom = zoomFactor;
-      newXCoordinate = clickX - relClickX * newZoom;
-      newYCoordinate = clickY - relClickY * newZoom;
-    } else {
-      // Zoom out
-      newZoom = minZoom;
-      newXCoordinate = 0;
-      newYCoordinate = 0;
-    }
-
-    // Ensure zoom stays within limits
-    newZoom = Math.min(Math.max(newZoom, minZoom), maxZoom);
-
-    setZoom(newZoom);
-    setXCoordinate(newXCoordinate);
-    setYCoordinate(newYCoordinate);
+    setZoom((prevZoom) => (prevZoom === 1 ? 2 : 1));
   };
 
   const handleMouseDown = (event) => {
@@ -72,21 +37,6 @@ const ZoomableImage = ({
     // Calculate new offsets with panning constraints (as before)
     let newXCoordinate = dragXCoordinate + (event.clientX - dragStartX);
     let newYCoordinate = dragYCoordinate + (event.clientY - dragStartY);
-
-    // Check if image is smaller than zoomed view
-    const isImageSmaller = imgRect.right * zoom < containerRect.right;
-
-    // Center image if it's smaller
-    if (isImageSmaller) {
-      newXCoordinate = Math.max(
-        0,
-        Math.min(containerRect.width - imgRect.width * zoom, newXCoordinate)
-      );
-      newYCoordinate = Math.max(
-        0,
-        Math.min(containerRect.height - imgRect.height * zoom, newYCoordinate)
-      );
-    }
 
     setXCoordinate(newXCoordinate);
     setYCoordinate(newYCoordinate);
