@@ -1,0 +1,21 @@
+.zoomable-image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #ddd;
+  /* user-select: none; Prevents text selection while dragging */
+}
+
+.zoomable-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+  user-select: none;
+  pointer-events: none;
+}
+
+.zoomed-in {
+  cursor: grab;
+}
